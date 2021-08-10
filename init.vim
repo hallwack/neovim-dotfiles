@@ -34,7 +34,9 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'windwp/nvim-ts-autotag'
     Plug 'kabouzeid/nvim-lspinstall'
-    Plug 'glepnir/galaxyline.nvim'
+    Plug 'famiu/feline.nvim'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'lewis6991/gitsigns.nvim'
 call plug#end()
 
 colorscheme deus
@@ -120,4 +122,5 @@ let g:nvim_tree_icons = {
     require('autopairs')
     require('treesitter')
     require('linestat')
+    require('git')
 EOF
