@@ -37,6 +37,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'famiu/feline.nvim'
     Plug 'nvim-lua/plenary.nvim'
     Plug 'lewis6991/gitsigns.nvim'
+    Plug 'dart-lang/dart-vim-plugin'
 call plug#end()
 
 colorscheme deus
@@ -81,9 +82,11 @@ nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
 
-let g:nvim_tree_side = 'right'
 let g:nvim_tree_indent_markers = 1
 let g:nvim_tree_highlight_opened_files = 1
+
+let g:dart_style_guide = 2
+let g:dart_format_on_save = 1
 
 let g:nvim_tree_icons = {
     \ 'default': '',

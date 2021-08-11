@@ -1,7 +1,7 @@
 local feline = require("feline")
 local colors = require("linestat.colors")
-local icons = require("linestat.icons")
 local vi_mode_utils = require("feline.providers.vi_mode")
+local lsp = require('feline.providers.lsp')
 
 local vi_mode_provider = function()
     local mode_alias = {
@@ -22,6 +22,7 @@ local vi_mode_provider = function()
         t = 'TERMINAL'
     }
     return ' ' .. mode_alias[vim.fn.mode()] .. ' '
+    -- .. ' '
 end
 
 local components = {
@@ -37,6 +38,7 @@ components.left.active[2] = {
     hl = function()
         local val = {}
         val.fg = vi_mode_utils.get_mode_color()
+        val.bg = 'bg'
         return val
     end
 }
@@ -45,58 +47,86 @@ components.left.active[3] = {
     provider = 'file_info',
     hl = function()
         local val = {}
-        val.fg = colors.black
-        val.bg = vi_mode_utils.get_mode_color()
+        val.fg = vi_mode_utils.get_mode_color()
+        val.bg = colors.dsColumn
         return val
     end,
     left_sep = {'slant_left_2', 'block'},
-    right_sep = {'block', 'slant_right_2', ' '}
+    right_sep = {'slant_right'}
 }
 
-components.left.active[4] = {
+components.mid.active[1] = {
     provider = 'git_branch',
-    hl = {fg = colors.orange_light, bg = colors.dsdark1},
-    left_sep = {'slant_left'},
-    right_sep = {'block', icons.separator.right}
+    icon = ' ',
+    hl = {fg = colors.orange, style = 'bold'},
+    right_sep = {' '}
+}
+
+components.mid.active[2] = {
+    provider = 'git_diff_added',
+    hl = {fg = colors.green_dark}
+}
+
+components.mid.active[3] = {
+    provider = 'git_diff_changed',
+    hl = {fg = colors.orange}
+}
+
+components.mid.active[4] = {
+    provider = 'git_diff_removed',
+    hl = {fg = colors.red}
 }
 
 components.right.active[1] = {
-    provider = 'git_diff_added',
-    hl = {fg = 'green', bg = 'black'}
+    provider = 'lsp_client_names',
+    icon = "⚡️",
+    hl = {fg = colors.ice},
+    left_sep = {' '}
 }
 
 components.right.active[2] = {
-    provider = 'git_diff_changed',
-    hl = {fg = 'orange', bg = 'black'}
+    provider = 'diagnostic_errors',
+    enabled = function() return lsp.diagnostics_exist('Error') end,
+    hl = {fg = colors.red}
 }
 
 components.right.active[3] = {
-    provider = 'git_diff_removed',
-    hl = {fg = 'red', bg = 'black'},
-    right_sep = function()
-        local val = {hl = {fg = 'NONE', bg = 'black'}}
-        if vim.b.gitsigns_status_dict then
-            val.str = ' '
-        else
-            val.str = ''
-        end
+    provider = 'diagnostic_warnings',
+    enabled = function() return lsp.diagnostics_exist('Warning') end,
+    hl = {fg = colors.yellow}
+}
 
-        return val
-    end
+components.right.active[4] = {
+    provider = 'diagnostic_hints',
+    enabled = function() return lsp.diagnostics_exist('Hint') end,
+    hl = {fg = colors.cyan}
+}
+
+components.right.active[5] = {
+    provider = 'diagnostic_info',
+    enabled = function() return lsp.diagnostics_exist('Information') end,
+    hl = {fg = colors.navyblue}
+}
+
+components.right.active[6] = {provider = 'position', left_sep = {' '}}
+
+components.right.active[7] = {
+    provider = 'scroll_bar',
+    hl = {fg = colors.turqoise, style = 'bold'}
 }
 
 local vi_mode_colors = {
-    NORMAL = colors.ice,
-    OP = colors.ice,
+    NORMAL = colors.cyan,
+    OP = colors.cyan,
     INSERT = colors.red,
     VISUAL = colors.green_dark,
     BLOCK = colors.green_dark,
     REPLACE = colors.orange_light,
     ['V-REPLACE'] = colors.orange_light,
-    ENTER = colors.cyan,
-    MORE = colors.cyan,
+    ENTER = colors.ice,
+    MORE = colors.ice,
     SELECT = colors.purple_light,
-    COMMAND = colors.cyan,
+    COMMAND = colors.teal,
     SHELL = colors.navyblue,
     TERM = colors.navyblue,
     NONE = colors.orange
