@@ -40,14 +40,50 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'romgrk/barbar.nvim'
     Plug 'nvim-lua/popup.nvim'
     Plug 'nvim-telescope/telescope.nvim'
-    Plug 'akinsho/flutter-tools.nvim'
+    Plug 'mhartington/formatter.nvim'
+    Plug 'andweeb/presence.nvim'
 call plug#end()
 
 colorscheme deus
 let g:deus_termcolors=256
 
-source ~/.config/nvim/mappings.vim
+let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_highlight_opened_files = 1
 
+let g:dart_style_guide = 2
+let g:dart_format_on_save = 1
+
+let g:nvim_tree_icons = {
+    \ 'default': '',
+    \ 'symlink': '',
+    \ 'git': {
+    \   'unstaged': "✗",
+    \   'staged': "✓",
+    \   'unmerged': "",
+    \   'renamed': "➜",
+    \   'untracked': "★",
+    \   'deleted': "",
+    \   'ignored': "◌"
+    \   },
+    \ 'folder': {
+    \   'arrow_open': "",
+    \   'arrow_closed': "",
+    \   'default': "",
+    \   'open': "",
+    \   'empty': "",
+    \   'empty_open': "",
+    \   'symlink': "",
+    \   'symlink_open': "",
+    \   },
+    \   'lsp': {
+    \     'hint': "",
+    \     'info': "",
+    \     'warning': "",
+    \     'error': "",
+    \   }
+    \ }
+
+source ~/.config/nvim/mappings.vim
 
 " Lua files
 :lua << EOF
@@ -58,4 +94,6 @@ source ~/.config/nvim/mappings.vim
     require('treesitter')
     require('linestat')
     require('git')
+    require('format')
+    require('discord')
 EOF

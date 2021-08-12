@@ -64,43 +64,12 @@ inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
+" Format
+nnoremap <silent> <leader>fm :Format<CR>
+
 " Nvim-Tree
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
 
-let g:nvim_tree_indent_markers = 1
-let g:nvim_tree_highlight_opened_files = 1
 
-let g:dart_style_guide = 2
-let g:dart_format_on_save = 1
-
-let g:nvim_tree_icons = {
-    \ 'default': '',
-    \ 'symlink': '',
-    \ 'git': {
-    \   'unstaged': "✗",
-    \   'staged': "✓",
-    \   'unmerged': "",
-    \   'renamed': "➜",
-    \   'untracked': "★",
-    \   'deleted': "",
-    \   'ignored': "◌"
-    \   },
-    \ 'folder': {
-    \   'arrow_open': "",
-    \   'arrow_closed': "",
-    \   'default': "",
-    \   'open': "",
-    \   'empty': "",
-    \   'empty_open': "",
-    \   'symlink': "",
-    \   'symlink_open': "",
-    \   },
-    \   'lsp': {
-    \     'hint': "",
-    \     'info': "",
-    \     'warning': "",
-    \     'error': "",
-    \   }
-    \ }

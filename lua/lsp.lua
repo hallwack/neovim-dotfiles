@@ -21,6 +21,7 @@ local function setup_servers()
     table.insert(servers, "html")
     table.insert(servers, "cssls")
     table.insert(servers, "jsonls")
+    table.insert(servers, "dartls")
 
     for _, lang in pairs(servers) do
         local config = make_config()
@@ -36,6 +37,20 @@ local function setup_servers()
                         }
                     },
                     telemetry = {enable = false}
+                }
+            }
+        end
+
+        if lang == "dartls" then
+            config.settings = {
+                cmd = {'dart', '~/Android/flutter/bin/cache/dart-sdk/bin/snapshots/analysis_server.dart.snapshot', '--lsp'},
+                filetypes = {"dart"},
+                init_options = {
+                  closingLabels = true,
+                  flutterOutline = true,
+                  onlyAnalyzeProjectsWithOpenFiles = false,
+                  outline = false,
+                  suggestFromUnimportedLibraries = true
                 }
             }
         end
