@@ -22,6 +22,7 @@ local function setup_servers()
     table.insert(servers, "cssls")
     table.insert(servers, "jsonls")
     table.insert(servers, "dartls")
+    table.insert(servers, "tsserver")
 
     for _, lang in pairs(servers) do
         local config = make_config()
