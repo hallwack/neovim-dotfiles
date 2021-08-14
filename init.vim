@@ -42,6 +42,8 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'mhartington/formatter.nvim'
     Plug 'andweeb/presence.nvim'
+    Plug 'b3nj5m1n/kommentary'
+    Plug 'folke/todo-comments.nvim'
 call plug#end()
 
 colorscheme deus

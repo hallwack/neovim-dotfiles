@@ -54,7 +54,7 @@ nnoremap <silent> <leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nnoremap <silent> <leader>fm <cmd>lua vim.lsp.lsp.formatting()<CR>
+nnoremap <silent> <leader>fm <cmd>lua vim.lsp.buf.formatting()<CR>
 
 " Autocompletion
 set completeopt=menuone,noselect
@@ -72,5 +72,4 @@ inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
-
 

@@ -1,8 +1,15 @@
 local lspconfig = require('lspconfig')
 local lspinstall = require('lspinstall')
 
-local function on_attach(bufnr)
+local function on_attach(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
+    if client.resolved_capabilities.document_formatting then
+        vim.api.nvim_command [[augroup Format]]
+        vim.api.nvim_command [[autocmd! * <buffer>]]
+        vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
+        vim.api.nvim_command [[augroup END]]
+    end
 end
 
 local function make_config()
