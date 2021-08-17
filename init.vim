@@ -4,6 +4,7 @@ set number
 set encoding=utf-8
 set tabstop=4
 set shiftwidth=4
+set softtabstop=4
 set expandtab
 set smartindent
 set autoindent
@@ -24,7 +25,6 @@ hi Normal guibg=NONE ctermbg=NONE
 
 " Set Plugin (with vim-plug)
 call plug#begin('~/.config/nvim/plugged')
-    Plug 'theniceboy/nvim-deus'
     Plug 'neovim/nvim-lspconfig'
     Plug 'hrsh7th/nvim-compe'
     Plug 'kyazdani42/nvim-web-devicons'
@@ -44,14 +44,31 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'andweeb/presence.nvim'
     Plug 'b3nj5m1n/kommentary'
     Plug 'folke/todo-comments.nvim'
+    Plug 'sainnhe/everforest'
+    Plug 'akinsho/flutter-tools.nvim'
+    Plug 'hrsh7th/vim-vsnip'
+    Plug 'hrsh7th/vim-vsnip-integ'
+    Plug 'Neevash/awesome-flutter-snippets'
+    Plug 'glepnir/lspsaga.nvim'
 call plug#end()
 
-colorscheme deus
-let g:deus_termcolors=256
+set background=dark
+let g:everforest_background = 'hard'
+let g:everforest_enable_italic = 1
+let g:everforest_ui_contrast = 'hard'
+let g:everforest_transparent_background = 1 " for transparent background
+colorscheme everforest
 
+" vsnip
+let g:vsnip_filetypes = {}
+let g:vsnip_filetypes.javascriptreact = ['javascript']
+let g:vsnip_filetypes.typescriptreact = ['typescript']
+
+" Nvim Tree
 let g:nvim_tree_indent_markers = 1
 let g:nvim_tree_highlight_opened_files = 1
 
+" Dart
 let g:dart_style_guide = 2
 let g:dart_format_on_save = 1
 
@@ -87,6 +104,8 @@ let g:nvim_tree_icons = {
 
 source ~/.config/nvim/mappings.vim
 
+autocmd BufRead,BufNewFile *.dart setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
 " Lua files
 :lua << EOF
     require('lsp')
@@ -98,4 +117,6 @@ source ~/.config/nvim/mappings.vim
     require('git')
     require('format')
     require('discord')
+    require('tools')
+    require('telescope-tools')
 EOF

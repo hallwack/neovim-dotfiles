@@ -28,7 +28,6 @@ local function setup_servers()
     table.insert(servers, "html")
     table.insert(servers, "cssls")
     table.insert(servers, "jsonls")
-    table.insert(servers, "dartls")
     table.insert(servers, "tsserver")
 
     for _, lang in pairs(servers) do
