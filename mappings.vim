@@ -1,7 +1,6 @@
 " Buffer
 nnoremap <TAB> :bnext<CR>
 nnoremap <S-TAB> :bprevious<CR>
-nnoremap <S-w> :bw<CR>
 
 " BarBar Buffer
 nnoremap <silent>    <A-,> :BufferPrevious<CR>
@@ -45,7 +44,7 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 " LSP
-nnoremap <silent> gd <cmd>lua require'lspsaga.provider'.preview_definition()<CR>
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
@@ -69,7 +68,7 @@ inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
 " Nvim-Tree
-nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <A-b> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
 

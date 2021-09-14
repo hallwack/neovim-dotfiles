@@ -15,6 +15,7 @@ set laststatus=2
 set cursorline
 set timeoutlen=500
 set mouse=a
+set hidden
 if has("termguicolors")     " set true colors
     set t_8f=\[[38;2;%lu;%lu;%lum
     set t_8b=\[[48;2;%lu;%lu;%lum
@@ -34,7 +35,6 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'windwp/nvim-ts-autotag'
     Plug 'kabouzeid/nvim-lspinstall'
-    Plug 'famiu/feline.nvim'
     Plug 'nvim-lua/plenary.nvim'
     Plug 'lewis6991/gitsigns.nvim'
     Plug 'romgrk/barbar.nvim'
@@ -50,13 +50,16 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'hrsh7th/vim-vsnip-integ'
     Plug 'Neevash/awesome-flutter-snippets'
     Plug 'glepnir/lspsaga.nvim'
+    Plug 'dsznajder/vscode-es7-javascript-react-snippets', { 'do': 'yarn install --frozen-lockfile && yarn compile' }
+    Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+    Plug 'windwp/windline.nvim'
 call plug#end()
 
 set background=dark
 let g:everforest_background = 'hard'
 let g:everforest_enable_italic = 1
 let g:everforest_ui_contrast = 'hard'
-let g:everforest_transparent_background = 1 " for transparent background
+let g:everforest_transparent_background = 0 " for transparent background
 colorscheme everforest
 
 " vsnip

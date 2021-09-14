@@ -1,140 +1,189 @@
-local feline = require("feline")
-local colors = require("linestat.colors")
-local vi_mode_utils = require("feline.providers.vi_mode")
-local lsp = require('feline.providers.lsp')
+local windline = require('windline')
+local helper = require('windline.helpers')
+local b_components = require('windline.components.basic')
+local state = _G.WindLine.state
 
-local vi_mode_provider = function()
-    local mode_alias = {
-        n = 'NORMAL',
-        no = 'NORMAL',
-        i = 'INSERT',
-        v = 'VISUAL',
-        V = 'V-LINE',
-        [''] = 'V-BLOCK',
-        c = 'COMMAND',
-        cv = 'COMMAND',
-        ce = 'COMMAND',
-        R = 'REPLACE',
-        Rv = 'REPLACE',
-        s = 'SELECT',
-        S = 'SELECT',
-        [''] = 'SELECT',
-        t = 'TERMINAL'
-    }
-    return ' ' .. mode_alias[vim.fn.mode()] .. ' '
-    -- .. ' '
-end
+local lsp_comps = require('windline.components.lsp')
+local git_comps = require('windline.components.git')
 
-local components = {
-    left = {active = {}, inactive = {}},
-    mid = {active = {}, inactive = {}},
-    right = {active = {}, inactive = {}}
+local hl_list = {
+    Black = {'white', 'black'},
+    White = {'black', 'white'},
+    Inactive = {'InactiveFg', 'InactiveBg'},
+    Active = {'ActiveFg', 'ActiveBg'}
+}
+local basic = {}
+
+local breakpoint_width = 90
+basic.divider = {b_components.divider, ''}
+basic.bg = {' ', 'StatusLine'}
+
+local colors_mode = {
+    Normal = {'red', 'black'},
+    Insert = {'green', 'black'},
+    Visual = {'yellow', 'black'},
+    Replace = {'blue_light', 'black'},
+    Command = {'magenta', 'black'}
 }
 
-components.left.active[1] = {provider = '▊', hl = {fg = colors.gray_darker}}
+basic.vi_mode = {
+    name = 'vi_mode',
+    hl_colors = colors_mode,
+    text = function() return {{'  ', state.mode[2]}} end
+}
+basic.square_mode = {
+    hl_colors = colors_mode,
+    text = function() return {{'▊', state.mode[2]}} end
+}
 
-components.left.active[2] = {
-    provider = vi_mode_provider,
-    hl = function()
-        local val = {}
-        val.fg = vi_mode_utils.get_mode_color()
-        val.bg = 'bg'
-        return val
+basic.lsp_diagnos = {
+    name = 'diagnostic',
+    hl_colors = {
+        red = {'red', 'black'},
+        yellow = {'yellow', 'black'},
+        blue = {'blue', 'black'}
+    },
+    width = breakpoint_width,
+    text = function()
+        if lsp_comps.check_lsp() then
+            return {
+                {' ', 'red'},
+                {
+                    lsp_comps.lsp_error({format = ' %s', show_zero = true}),
+                    'red'
+                },
+                {
+                    lsp_comps.lsp_warning({format = '  %s', show_zero = true}),
+                    'yellow'
+                },
+                {
+                    lsp_comps.lsp_hint({format = '  %s', show_zero = true}),
+                    'blue'
+                }
+            }
+        end
+        return ''
+    end
+}
+basic.file = {
+    name = 'file',
+    hl_colors = {
+        default = hl_list.Black,
+        white = {'white', 'black'},
+        magenta = {'magenta', 'black'}
+    },
+    text = function(_, _, width)
+        if width > breakpoint_width then
+            return {
+                {b_components.cache_file_size(), 'default'}, {' ', ''},
+                {b_components.cache_file_name('[No Name]', ''), 'magenta'},
+                {b_components.line_col, 'white'}, {b_components.progress, ''},
+                {' ', ''}, {b_components.file_modified(' '), 'magenta'}
+            }
+        else
+            return {
+                {b_components.cache_file_size(), 'default'}, {' ', ''},
+                {b_components.cache_file_name('[No Name]', ''), 'magenta'},
+                {' ', ''}, {b_components.file_modified(' '), 'magenta'}
+            }
+        end
+    end
+}
+basic.file_right = {
+    hl_colors = {
+        default = hl_list.Black,
+        white = {'white', 'black'},
+        magenta = {'magenta', 'black'}
+    },
+    text = function(_, _, width)
+        if width < breakpoint_width then
+            return {
+                {b_components.line_col, 'white'}, {b_components.progress, ''}
+            }
+        end
+    end
+}
+basic.git = {
+    name = 'git',
+    hl_colors = {
+        green = {'green', 'black'},
+        red = {'red', 'black'},
+        blue = {'blue', 'black'}
+    },
+    width = breakpoint_width,
+    text = function()
+        if git_comps.is_git() then
+            return {
+                {' ', ''},
+                {
+                    git_comps.diff_added({format = ' %s', show_zero = true}),
+                    'green'
+                },
+                {
+                    git_comps.diff_removed(
+                        {format = '  %s', show_zero = true}), 'red'
+                },
+                {
+                    git_comps.diff_changed({format = ' 柳%s', show_zero = true}),
+                    'blue'
+                }
+            }
+        end
+        return ''
     end
 }
 
-components.left.active[3] = {
-    provider = 'file_info',
-    hl = function()
-        local val = {}
-        val.fg = vi_mode_utils.get_mode_color()
-        val.bg = colors.dsColumn
-        return val
+local quickfix = {
+    filetypes = {'qf', 'Trouble'},
+    active = {
+        {'🚦 Quickfix ', {'white', 'black'}},
+        {helper.separators.slant_right, {'black', 'black_light'}}, {
+            function() return vim.fn.getqflist({title = 0}).title end,
+            {'cyan', 'black_light'}
+        }, {' Total : %L ', {'cyan', 'black_light'}},
+        {helper.separators.slant_right, {'black_light', 'InactiveBg'}},
+        {' ', {'InactiveFg', 'InactiveBg'}}, basic.divider,
+        {helper.separators.slant_right, {'InactiveBg', 'black'}},
+        {'🧛 ', {'white', 'black'}}
+    },
+    always_active = true,
+    show_last_status = true
+}
+
+local explorer = {
+    filetypes = {'fern', 'NvimTree', 'lir'},
+    active = {
+        {'  ', {'white', 'black_light'}},
+        {helper.separators.slant_right, {'black_light', 'NormalBg'}},
+        {b_components.divider, ''},
+        {b_components.file_name(''), {'white', 'NormalBg'}}
+    },
+    always_active = true,
+    show_last_status = true
+}
+local default = {
+    filetypes = {'default'},
+    active = {
+        basic.square_mode, basic.vi_mode, basic.file, basic.lsp_diagnos,
+        basic.divider, basic.file_right,
+        {lsp_comps.lsp_name(), {'magenta', 'black'}, breakpoint_width},
+        basic.git,
+        {git_comps.git_branch(), {'magenta', 'black'}, breakpoint_width},
+        {' ', hl_list.Black}, basic.square_mode
+    },
+    inactive = {
+        {b_components.full_file_name, hl_list.Inactive},
+        basic.file_name_inactive, basic.divider, basic.divider,
+        {b_components.line_col, hl_list.Inactive},
+        {b_components.progress, hl_list.Inactive}
+    }
+}
+
+windline.setup({
+    colors_name = function(colors)
+        -- print(vim.inspect(colors))
+        -- ADD MORE COLOR HERE ----
+        return colors
     end,
-    left_sep = {'slant_left_2', 'block'},
-    right_sep = {'slant_right'}
-}
-
-components.mid.active[1] = {
-    provider = 'git_branch',
-    icon = ' ',
-    hl = {fg = colors.orange, style = 'bold'},
-    right_sep = {' '}
-}
-
-components.mid.active[2] = {
-    provider = 'git_diff_added',
-    hl = {fg = colors.green_dark}
-}
-
-components.mid.active[3] = {
-    provider = 'git_diff_changed',
-    hl = {fg = colors.orange}
-}
-
-components.mid.active[4] = {
-    provider = 'git_diff_removed',
-    hl = {fg = colors.red}
-}
-
-components.right.active[1] = {
-    provider = 'lsp_client_names',
-    icon = "⚡️",
-    hl = {fg = colors.ice},
-    left_sep = {' '}
-}
-
-components.right.active[2] = {
-    provider = 'diagnostic_errors',
-    enabled = function() return lsp.diagnostics_exist('Error') end,
-    hl = {fg = colors.red}
-}
-
-components.right.active[3] = {
-    provider = 'diagnostic_warnings',
-    enabled = function() return lsp.diagnostics_exist('Warning') end,
-    hl = {fg = colors.yellow}
-}
-
-components.right.active[4] = {
-    provider = 'diagnostic_hints',
-    enabled = function() return lsp.diagnostics_exist('Hint') end,
-    hl = {fg = colors.cyan}
-}
-
-components.right.active[5] = {
-    provider = 'diagnostic_info',
-    enabled = function() return lsp.diagnostics_exist('Information') end,
-    hl = {fg = colors.navyblue}
-}
-
-components.right.active[6] = {provider = 'position', left_sep = {' '}}
-
-components.right.active[7] = {
-    provider = 'scroll_bar',
-    hl = {fg = colors.turqoise, style = 'bold'}
-}
-
-local vi_mode_colors = {
-    NORMAL = colors.cyan,
-    OP = colors.cyan,
-    INSERT = colors.red,
-    VISUAL = colors.green_dark,
-    BLOCK = colors.green_dark,
-    REPLACE = colors.orange_light,
-    ['V-REPLACE'] = colors.orange_light,
-    ENTER = colors.ice,
-    MORE = colors.ice,
-    SELECT = colors.purple_light,
-    COMMAND = colors.teal,
-    SHELL = colors.navyblue,
-    TERM = colors.navyblue,
-    NONE = colors.orange
-}
-
-feline.setup({
-    default_bg = colors.dsdark2,
-    default_fg = colors.dslight0,
-    components = components,
-    vi_mode_colors = vi_mode_colors
+    statuslines = {default, quickfix, explorer}
 })
